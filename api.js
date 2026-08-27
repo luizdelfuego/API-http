@@ -1,109 +1,65 @@
 import http from 'node:http'
+import { URL } from 'node:url'
 
 const porta = 3000
 
-const tarefas =[
-    {id: 1, titulo: 'Lavar Louças'},
-    {id: 2, titulo: 'Comprar uma RTX 5090'}
+const produtos = [
+    {id: 1, nome: "Sabonete"},
+    {id: 2, nome: "Volante LogiTech G923"},
+    {id: 3, nome: "Sabão em Pó"},
+    {id: 4, nome: "Pelúcia do Sonic"},
 ]
 
-const server = http.createServer((requisicao, resposta)=> {
-    resposta.setHeader('Content-Type', 'application/json; charset=utf-8')
+const server = http.createServer((req, res) => {
+    res.statusCode = 200
+    res.setHeader('Content-Type', 'application/json; charset=utf-8')
 
-    if (requisicao.method == 'GET' && requisicao.url == '/tarefas') {
-        resposta.statusCode = 200
-        resposta.end(JSON.stringify(tarefas))
-    }else if (requisicao.method == 'POST' && requisicao.url == '/tarefas') {
-        let body = ''
+    const url = new URL(requisicao.url, `http://${requisicao.headers.host}`);
 
-        requisicao.on('data', (chunk) => {
-            body += chunk.toString()
-        })
-
-        requisicao.on('end', () => {
-            try{
-                const novaTarefa = JSON.parse(body)
-
-                if (!novaTarefa.titulo) {
-                    resposta.statusCode = 400
-                    resposta.end(JSON.stringify({error: 'O campo "título" é obrigatório.'}));
-                }
-
-                const tarefaCriada = {
-                    id:tarefas.length + 1,
-                    titulo: novaTarefa.titu
-                }
-
-                tarefas.push(tarefaCriada)
-
-                resposta.statusCode = 201
-                resposta.end(JSON.stringify(tarefaCriada))
-
-            } catch(error) {
-                resposta.statusCode = 400
-                resposta.end(JSON.stringify({error: 'Formato JSON inválido!'}));
-            }   import http from 'node:http'
-
-const porta = 3000
-
-const tarefas =[
-    {id: 1, titulo: 'Lavar Louças'},
-    {id: 2, titulo: 'Comprar uma RTX 5090'}
-]
-
-const server = http.createServer((requisicao, resposta)=> {
-    resposta.setHeader('Content-Type', 'application/json; charset=utf-8')
-
-    if (requisicao.method == 'GET' && requisicao.url == '/tarefas') {
-        resposta.statusCode = 200
-        resposta.end(JSON.stringify(tarefas))
-    }else if (requisicao.method == 'POST' && requisicao.url == '/tarefas') {
-        let body = ''
-
-        requisicao.on('data', (chunk) => {
-            body += chunk.toString()
-        })
-
-        requisicao.on('end', () => {
-            try{
-                const novaTarefa = JSON.parse(body)
-
-                if (!novaTarefa.titulo) {
-                    resposta.statusCode = 400
-                    resposta.end(JSON.stringify({error: 'O campo "título" é obrigatório.'}));
-                }
-
-                const tarefaCriada = {
-                    id:tarefas.length + 1,
-                    titulo: novaTarefa.titu
-                }
-
-                tarefas.push(tarefaCriada)
-
-                resposta.statusCode = 201
-                resposta.end(JSON.stringify(tarefaCriada))
-
-            } catch(error) {
-                resposta.statusCode = 400
-                resposta.end(JSON.stringify({error: 'Formato JSON inválido!'}));
-            }   
-        })
-    }else {
-        resposta.statusCode = 404
-        resposta.end(JSON.stringify({error: 'Página não encontrada.'}))
+    if (req.method == "GET" && req.url == "/contato") {
+        return res.end(JSON.stringify({data:
+            {numero_telefone: "67 99999 9999",
+                endereco: "Rua da Alegria, 99, Centro"}}));
     }
-});
+
+    else if (requisicao.method == 'GET' && urlObj.pathname == '/tarefa/busca') {
+        const titulo = urlObj.searchParams.get('titulo');
+    }
+    else if (requisicao.method == 'POST' && requisicao.url == '/tarefa') {
+        let body = ''
+    }
+    else {
+        res.statusCode = 404
+        
+        return res.end(JSON.stringify({data: {"status": "Sua requisição não deu certo"}}));
+    }
+
+
+    if (req.method == "GET" && req.url == "/produtos") {
+        return res.end(JSON.stringify(produtos));
+    }
+
+     else {
+        res.statusCode = 404
+        
+        return res.end(JSON.stringify({data: {"status": "Sua requisição não deu certo"}}));
+    }
+
+
+    if (req.method == "GET" && req.url == '/status') {
+        return res.end('application/json; charset=utf-8; {status: ok}`');
+    } 
+    else {
+        res.statusCode = 404
+        
+        return res.end(JSON.stringify({data: {"status": "Sua requisição não deu certo"}}));
+    }
+
+
+
+    res.end(JSON.stringify({data: "Página Inicial"}))
+})
 
 server.listen(porta, () => {
-    console.log(`Servidor funcionando na porta ${porta}`);
-});
-        })
-    }else {
-        resposta.statusCode = 404
-        resposta.end(JSON.stringify({error: 'Página não encontrada.'}))
-    }
-});
-
-server.listen(porta, () => {
-    console.log(`Servidor funcionando na porta ${porta}`);
+    console.log(`Servidor ouvindo na porta ${porta}`)
 });
